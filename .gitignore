@@ -61,3 +61,6 @@ build/
 ### Helm ###
 **/helm/**/charts/*.tgz
 **.helmignore
+
+### Minio ###
+**/.data/minio/

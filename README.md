@@ -45,8 +45,12 @@ From the `helm` directory, execute:
 ```bash
 helm install keycloak keycloak
 ```
-Access the Keycloak webpage: http://localhost:80  
-Username: `user`  
+Access the Keycloak webpage (version 2): http://localhost:7080
+Username: `admin`
+Password: `admin`
+
+Access the Keycloak webpage (version 3): http://localhost:80
+Username: `user`
 Password: `password`
 
 Go to **Clients → Create client**:  
@@ -62,17 +66,33 @@ Go to **Clients → eazybank-callcenter-cc → Service Account Roles → Assign 
 Check roles: `ACCOUNTS`, `CARDS`, `LOANS`
 
 
-### Code deployment - Version 3
-
-Run every single Spring Boot project with:  
+### Code deployment - Version 2
+Build and containerize all Spring Boot projects by running:  
 `mvn compile jib:dockerBuild`
 
-Run from kubernetes folder
+From the /v2/kubernetes, run:
+```bash
+kubectl apply -f 1_keycloak.yml
+kubectl apply -f 2_configmaps.yaml
+kubectl apply -f 3_configserver.yaml
+kubectl apply -f 4_eurekaserver.yml
+kubectl apply -f 5_accounts.yml
+kubectl apply -f 6_loans.yml
+kubectl apply -f 7_cards.yml
+kubectl apply -f 8_gateway.yml
+```
+
+### Code deployment - Version 3
+
+For each Spring Boot project, run:  
+`mvn compile jib:dockerBuild`
+
+From the /v3/kubernetes, run:
 ```bash
 kubectl apply -f kubernetes-discoveryserver.yml
 ```
 
-Run from helm folder
+From /v3/helm run:
 ```bash
 helm install kafka kafka
 helm install prometheus kube-prometheus - available at http://localhost:9090/
