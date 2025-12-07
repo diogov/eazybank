@@ -40,12 +40,12 @@ kubectl get secret admin-user -n kubernetes-dashboard -o jsonpath="{.data.token}
 
 ### Keycloak Setup
 
-From the `helm` directory, execute:
+Run the following command to start keycloak in a docker container:
 
 ```bash
-helm install keycloak keycloak
+docker run -d -p 7080:8080 -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:26.4.7 start-dev
 ```
-Access the Keycloak webpage (version 2): http://localhost:7080
+Access the Keycloak webpage (version 1 and 2): http://localhost:7080
 Username: `admin`
 Password: `admin`
 
@@ -65,6 +65,16 @@ Create roles: `ACCOUNTS`, `CARDS`, `LOANS`
 Go to **Clients → eazybank-callcenter-cc → Service Account Roles → Assign Role → Realm Roles**  
 Check roles: `ACCOUNTS`, `CARDS`, `LOANS`
 
+### Code deployment - Version 1
+If you want to debug Kafka messaging, run the following command and then run each Spring Boot project from your IDE:
+```bash
+docker run -p 9092:9092 apache/kafka:4.1.0
+```
+
+If you just want to run the project, execute **docker compose** from either default, qa or prod directory:
+```bash
+docker compose up -d
+```
 
 ### Code deployment - Version 2
 Build and containerize all Spring Boot projects by running:  
@@ -94,6 +104,7 @@ kubectl apply -f kubernetes-discoveryserver.yml
 
 From /v3/helm run:
 ```bash
+helm install keycloak keycloak
 helm install kafka kafka
 helm install prometheus kube-prometheus - available at http://localhost:9090/
 helm install loki grafana-loki
